@@ -1,0 +1,25 @@
+
+--procedimiento utilizado app web 
+--se agrega venta, actualiza el STOCK y precio por la cantidad vendida. 
+Alter Procedure SP_AGREGAR_VENTA (
+    @DNI VARCHAR
+    @IDARTICULO BIGINT,
+    @CANTIDAD INT
+)
+AS 
+BEGIN
+   BEGIN TRY 
+     DECLARE @PU MONEY 
+     SELECT @PU =PRECIO FROM ARTICULOS WHERE IDARTICULO =@IDARTICULO 
+
+    INSERT INTO VENTAS (DNI,IDARTICULO,CANTIDAD,FECHA, IMPORTES)
+    VALUES (@DNI,@IDARICULO,@CANTIDAD,GETDATE(),@PU*@CANTIDAD)
+    UPDATE ARTICULOS SET STOCK =STOCK- @CANTIDAD WHERE IDARTICULO=@IDARTICULO
+   END TRY 
+   BEGIN CATCH
+     RAISERROR ('NO SE PUEDE AGREGAR LA VENTA', 16,1)
+   END CATCH
+
+END 
+
+--luego en la app se llama a sp_agregar_ventas
